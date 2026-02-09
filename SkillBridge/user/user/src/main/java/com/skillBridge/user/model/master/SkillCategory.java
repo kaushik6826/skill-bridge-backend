@@ -3,7 +3,10 @@ package com.skillBridge.user.model.master;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "skill_category",schema = "master")
@@ -11,6 +14,7 @@ public class SkillCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id", nullable = false)
     private Long id;
 
     @Column(name = "category_name", nullable = false, unique = true)
@@ -24,8 +28,13 @@ public class SkillCategory {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private List<Skill> skills;
+    @OneToMany(
+            mappedBy = "category",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+        )
+    @JsonManagedReference
+    private List<Skill> skills = new ArrayList<>();
     
     
    public  SkillCategory()

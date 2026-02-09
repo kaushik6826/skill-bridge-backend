@@ -3,6 +3,8 @@ package com.skillBridge.user.model.master;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,6 +22,7 @@ public class Skill {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "skill_id", nullable = false)
 	private Long id;
 
 	@Column(name = "skill_name", nullable = false)
@@ -35,10 +38,9 @@ public class Skill {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = false)
+	@JsonBackReference
 	private SkillCategory category;
 
-	@OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
-	private List<WorkerSkill> workerSkills;
 	
 	
 	public Skill()
@@ -94,13 +96,7 @@ public class Skill {
 		this.category = category;
 	}
 
-	public List<WorkerSkill> getWorkerSkills() {
-		return workerSkills;
-	}
-
-	public void setWorkerSkills(List<WorkerSkill> workerSkills) {
-		this.workerSkills = workerSkills;
-	}
+	
 	
 	
 	

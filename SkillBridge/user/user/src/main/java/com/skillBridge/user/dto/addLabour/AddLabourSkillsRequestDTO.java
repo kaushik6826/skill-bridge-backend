@@ -1,4 +1,4 @@
-package com.skillBridge.user.dto.addSkill;
+package com.skillBridge.user.dto.addLabour;
 
 import java.util.List;
 
