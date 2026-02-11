@@ -102,5 +102,13 @@ public class JwtUtil {
     public boolean isRefreshToken(String token) {
         return "REFRESH".equals(extractClaims(token).get("type"));
     }
+    
+    public String generateMobileWorkerToken(Long workerId, String mobileNo) {
+
+		return Jwts.builder().setSubject(workerId.toString()).claim("workerId", workerId).claim("mobileNo", mobileNo)
+				.claim("type", "MOBILE").setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiry))
+				.signWith(key, SignatureAlgorithm.HS256).compact();
+	}
 }
 

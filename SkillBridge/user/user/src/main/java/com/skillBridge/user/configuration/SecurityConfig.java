@@ -27,6 +27,7 @@ public class SecurityConfig {
                                 "/",
                                 "/home/**",
                                 "/master/**",
+                                "/mapi/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
