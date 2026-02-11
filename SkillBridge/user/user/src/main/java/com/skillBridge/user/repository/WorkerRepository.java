@@ -1,12 +1,18 @@
 package com.skillBridge.user.repository;
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
+<<<<<<< Updated upstream
 import java.util.Optional;
 
+=======
+>>>>>>> Stashed changes
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
