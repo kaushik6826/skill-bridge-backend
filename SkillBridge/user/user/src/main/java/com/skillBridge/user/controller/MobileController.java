@@ -3,6 +3,7 @@ package com.skillBridge.user.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,25 +19,25 @@ public class MobileController {
 	@Autowired
 	private MobileService mobileService;
 
-	@PostMapping("signupGenerateOtp")
+	@PostMapping(value = "signupGenerateOtp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CommonResponse> signupGenerateOtp(@RequestBody GenerateOtpRequest req) {
 
 		return ResponseEntity.ok(mobileService.generateSignupOtp(req.getMobileNo()));
 	}
 
-	@PostMapping("signupVerifyOtp")
+	@PostMapping(value = "signupVerifyOtp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CommonResponse> signupVerifyOtp(@RequestBody VerifyOtpRegisterRequest req) {
 
 		return ResponseEntity.ok(mobileService.verifyOtpAndRegister(req));
 	}
 
-	@PostMapping("loginGenerateOtp")
+	@PostMapping(value = "loginGenerateOtp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CommonResponse> loginGenerateOtp(@RequestBody GenerateOtpRequest req) {
 
 		return ResponseEntity.ok(mobileService.generateLoginOtp(req.getMobileNo()));
 	}
 
-	@PostMapping("loginVerifyOtp")
+	@PostMapping(value = "loginVerifyOtp", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CommonResponse> loginVerifyOtp(@RequestBody Map<String, Object> req) {
 
 		Long mobileNo = Long.valueOf(req.get("mobileNo").toString());
