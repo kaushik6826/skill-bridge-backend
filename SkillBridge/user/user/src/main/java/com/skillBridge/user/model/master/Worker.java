@@ -43,6 +43,7 @@ public class Worker
     private String password;
     private String gender;
     private String city;
+    private String state;
     private Integer totalJobsCompleted;
     private Integer totalJobsCancelled;
     private LocalDateTime lastJobCompletedAt;
@@ -232,6 +233,12 @@ public class Worker
 	}
 	public void setIsAccountLocked(Boolean isAccountLocked) {
 		this.isAccountLocked = isAccountLocked;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
 	}
 
       

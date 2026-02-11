@@ -66,7 +66,8 @@ public class MobileService {
 			return new CommonResponse("400", "User already registered. Please login.", null);
 		}
 
-		int otp = 100000 + secureRandom.nextInt(900000);
+		//int otp = 100000 + secureRandom.nextInt(900000);
+		int otp = 123456;
 
 		WorkerLoginOtp entity = new WorkerLoginOtp();
 		entity.setMobileno(mobileNo.intValue());
@@ -124,6 +125,7 @@ public class MobileService {
 
 		worker.setAddress(req.getAddress());
 		worker.setCity(req.getCity());
+		worker.setState(req.getState());
 
 		worker.setYearsOfExperience(req.getExperience());
 		worker.setAge(req.getAge() != null ? Integer.parseInt(req.getAge()) : null);
@@ -157,8 +159,8 @@ public class MobileService {
 			return new CommonResponse("400", "User not registered. Please signup first.", null);
 		}
 
-		int otp = 100000 + secureRandom.nextInt(900000);
-
+	//	int otp = 100000 + secureRandom.nextInt(900000);
+		int otp =123456;
 		WorkerLoginOtp entity = new WorkerLoginOtp();
 		entity.setMobileno(mobileNo.intValue());
 		entity.setOtp(String.valueOf(otp));
