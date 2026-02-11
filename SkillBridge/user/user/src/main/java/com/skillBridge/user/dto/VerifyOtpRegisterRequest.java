@@ -16,6 +16,8 @@ public class VerifyOtpRegisterRequest {
 	private String workingCategory;
 	private List<String> skills;
 	private Integer experience;
+	private String age;
+	private String gender;
 
 	public Long getMobileNo() {
 		return mobileNo;
@@ -95,6 +97,22 @@ public class VerifyOtpRegisterRequest {
 
 	public void setExperience(Integer experience) {
 		this.experience = experience;
+	}
+
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 }

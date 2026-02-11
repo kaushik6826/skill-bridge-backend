@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,10 @@ public class MobileService {
 
 	private static final SecureRandom secureRandom = new SecureRandom();
 
+	private String normalizePhone(Long mobileNo) {
+		return String.valueOf(mobileNo).trim();
+	}
+
 	private String[] splitName(String fullName) {
 
 		if (fullName == null || fullName.trim().isEmpty())
@@ -49,14 +54,19 @@ public class MobileService {
 		return new String[] { first, last };
 	}
 
+	private String generateWorkerCode() {
+		return "WRK" + System.currentTimeMillis();
+	}
+
 	public CommonResponse generateSignupOtp(Long mobileNo) {
 
-		if (workerRepo.findByPhone(mobileNo.toString()).isPresent()) {
+		String phone = normalizePhone(mobileNo);
+
+		if (workerRepo.findByPhone(phone).isPresent()) {
 			return new CommonResponse("400", "User already registered. Please login.", null);
 		}
 
-//		int otp = 100000 + secureRandom.nextInt(900000);
-		int otp = 123456;
+		int otp = 100000 + secureRandom.nextInt(900000);
 
 		WorkerLoginOtp entity = new WorkerLoginOtp();
 		entity.setMobileno(mobileNo.intValue());
@@ -77,15 +87,19 @@ public class MobileService {
 
 	public CommonResponse verifyOtpAndRegister(VerifyOtpRegisterRequest req) {
 
-		if (workerRepo.findByPhone(req.getMobileNo().toString()).isPresent()) {
+		String phone = normalizePhone(req.getMobileNo());
+
+		if (workerRepo.findByPhone(phone).isPresent()) {
 			return new CommonResponse("400", "User already registered. Please login.", null);
 		}
 
-		WorkerLoginOtp otpEntity = otpRepo
-				.findTopByMobilenoAndVerifiedFalseOrderByCreatedAtDesc(req.getMobileNo().intValue()).orElse(null);
+		Optional<WorkerLoginOtp> otpOpt = otpRepo
+				.findTopByMobilenoAndVerifiedFalseOrderByCreatedAtDesc(req.getMobileNo().intValue());
 
-		if (otpEntity == null)
+		if (otpOpt.isEmpty())
 			return new CommonResponse("400", "OTP not generated.", null);
+
+		WorkerLoginOtp otpEntity = otpOpt.get();
 
 		if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now()))
 			return new CommonResponse("400", "OTP Expired", null);
@@ -99,19 +113,36 @@ public class MobileService {
 		String[] names = splitName(req.getFullName());
 
 		Worker worker = new Worker();
+
+		worker.setWorkerCode(generateWorkerCode());
+
 		worker.setFirstName(names[0]);
 		worker.setLastName(names[1]);
-		worker.setPhone(req.getMobileNo().toString());
-		worker.setEmail(req.getMobileNo() + "@skillbridge.com");
+
+		worker.setPhone(phone);
+		worker.setEmail(phone + "@skillbridge.com");
+
 		worker.setAddress(req.getAddress());
 		worker.setCity(req.getCity());
+
 		worker.setYearsOfExperience(req.getExperience());
+		worker.setAge(req.getAge() != null ? Integer.parseInt(req.getAge()) : null);
+		worker.setGender(req.getGender());
+
 		worker.setIsActive(true);
-		worker.setIsPhoneVerified(true);
 		worker.setIsAvailable(true);
+		worker.setIsCompanyAssigned(false);
+		worker.setIsBlocked(false);
+		worker.setIsEmailVerified(false);
+		worker.setIsPhoneVerified(true);
+		worker.setIsAccountLocked(false);
+
 		worker.setRating(0f);
 		worker.setTotalJobsCompleted(0);
 		worker.setTotalJobsCancelled(0);
+		worker.setFailedLoginAttempts(0);
+
+		worker.setLastLoginAt(LocalDateTime.now());
 
 		workerRepo.save(worker);
 
@@ -120,12 +151,13 @@ public class MobileService {
 
 	public CommonResponse generateLoginOtp(Long mobileNo) {
 
-		if (workerRepo.findByPhone(mobileNo.toString()).isEmpty()) {
+		String phone = normalizePhone(mobileNo);
+
+		if (workerRepo.findByPhone(phone).isEmpty()) {
 			return new CommonResponse("400", "User not registered. Please signup first.", null);
 		}
 
-//		int otp = 100000 + secureRandom.nextInt(900000);
-		int otp = 123456;
+		int otp = 100000 + secureRandom.nextInt(900000);
 
 		WorkerLoginOtp entity = new WorkerLoginOtp();
 		entity.setMobileno(mobileNo.intValue());
@@ -146,14 +178,17 @@ public class MobileService {
 
 	public CommonResponse verifyOtpAndLogin(Long mobileNo, String otp) {
 
-		Worker worker = workerRepo.findByPhone(mobileNo.toString())
-				.orElseThrow(() -> new RuntimeException("User not registered"));
+		String phone = normalizePhone(mobileNo);
 
-		WorkerLoginOtp otpEntity = otpRepo.findTopByMobilenoAndVerifiedFalseOrderByCreatedAtDesc(mobileNo.intValue())
-				.orElse(null);
+		Worker worker = workerRepo.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not registered"));
 
-		if (otpEntity == null)
+		Optional<WorkerLoginOtp> otpOpt = otpRepo
+				.findTopByMobilenoAndVerifiedFalseOrderByCreatedAtDesc(mobileNo.intValue());
+
+		if (otpOpt.isEmpty())
 			return new CommonResponse("400", "OTP not generated.", null);
+
+		WorkerLoginOtp otpEntity = otpOpt.get();
 
 		if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now()))
 			return new CommonResponse("400", "OTP Expired", null);
@@ -164,7 +199,7 @@ public class MobileService {
 		otpEntity.setVerified(true);
 		otpRepo.save(otpEntity);
 
-		String accessToken = jwtUtil.generateMobileWorkerToken(worker.getId(), mobileNo.toString());
+		String accessToken = jwtUtil.generateMobileWorkerToken(worker.getId(), phone);
 
 		String refreshToken = jwtUtil.generateRefreshToken(worker.getId());
 
@@ -184,5 +219,4 @@ public class MobileService {
 
 		return new CommonResponse("200", "Login Successful", result);
 	}
-
 }

@@ -41,9 +41,6 @@ public class Skill {
 	@JsonBackReference
 	private SkillCategory category;
 
-	@OneToMany(mappedBy = "skill")
-	private List<WorkerSkill> workerSkills;
-
 	
 	
 	public Skill()

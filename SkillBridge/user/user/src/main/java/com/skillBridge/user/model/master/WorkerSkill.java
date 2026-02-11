@@ -31,9 +31,6 @@ public class WorkerSkill {
 
 	@Column(name = "assigned_at")
 	private LocalDateTime assignedAt = LocalDateTime.now();
-	
-	@Column(name = "is_active")
-	private Boolean isActive = true;
 
 	public WorkerSkill() {
 
