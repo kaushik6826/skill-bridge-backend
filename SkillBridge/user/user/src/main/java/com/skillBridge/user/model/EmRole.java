@@ -16,7 +16,7 @@ public class EmRole
     private String role;
 
     @Column(name = "parent_id")
-    private int parentId;
+    private Integer parentId;
 
     @Column(name = "is_active")
     private boolean isActive;

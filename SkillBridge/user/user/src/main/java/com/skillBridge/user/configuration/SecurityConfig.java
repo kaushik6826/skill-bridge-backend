@@ -17,30 +17,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/**",
-                                "/",
-                                "/home/**",
-                                "/master/**",
-                                "/mapi/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth -> oauth
-                        .successHandler(oAuthSuccessHandler())
-                );
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/auth/**", "/", "/home/**", "/master/**", "/mapi/**", "/v3/api-docs/**",
+								"/swagger-ui/**", "/admin/auth/**", "/swagger-ui.html")
+						.permitAll().anyRequest().authenticated())
+				.oauth2Login(oauth -> oauth.successHandler(oAuthSuccessHandler()));
 
-        return http.build();
-    }
-    
+		return http.build();
+	}
+
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
 //
@@ -59,11 +47,9 @@ public class SecurityConfig {
 //        return source;
 //    }
 
-
-    @Bean
-    public AuthenticationSuccessHandler oAuthSuccessHandler() {
-        return new GoogleOAuthSuccessHandler();
-    }
+	@Bean
+	public AuthenticationSuccessHandler oAuthSuccessHandler() {
+		return new GoogleOAuthSuccessHandler();
+	}
 
 }
-
